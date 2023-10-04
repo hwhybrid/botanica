@@ -18,7 +18,4 @@ public interface PlantRepository extends JpaRepository<Plant, Long> {
     List<Plant> findByEdibleFalse();
 
 
-
-
-
 }

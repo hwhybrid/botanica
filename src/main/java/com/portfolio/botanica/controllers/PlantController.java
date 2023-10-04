@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/plants")
+@RequestMapping("/api/v1/plants")
+@CrossOrigin(origins = "http://localhost:3000") // Allows requests from the frontend
+
 public class PlantController {
     private final PlantService plantService;
 

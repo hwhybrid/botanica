@@ -15,7 +15,14 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Loads plant data from JSON file
-        plantService.loadPlantDataFromJson();
+//        // Delete all existing plant entries
+//        plantService.deleteAllPlants();
+        {
+            // Check if the database is empty
+            if (!plantService.isDatabaseSeeded()) {
+                // If the database is empty, load plant data from JSON file
+                plantService.loadPlantDataFromJson();
+            }
+        }
     }
 }

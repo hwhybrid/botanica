@@ -13,6 +13,7 @@ public interface PlantService {
 
     void loadPlantDataFromJson();
 
+    boolean isDatabaseSeeded();
 
-
+    void deleteAllPlants();
 }

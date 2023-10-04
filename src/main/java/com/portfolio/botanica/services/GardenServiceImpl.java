@@ -3,14 +3,17 @@ package com.portfolio.botanica.services;
 import com.portfolio.botanica.dtos.GardenDto;
 import com.portfolio.botanica.entities.Garden;
 import com.portfolio.botanica.entities.Plant;
+import com.portfolio.botanica.entities.PlantedPlant;
 import com.portfolio.botanica.entities.User;
 import com.portfolio.botanica.repositories.GardenRepository;
+import com.portfolio.botanica.repositories.PlantedPlantRepository;
 import com.portfolio.botanica.repositories.UserRepository;
 import com.portfolio.botanica.repositories.PlantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +27,9 @@ public class GardenServiceImpl implements GardenService {
 
     @Autowired
     private PlantRepository plantRepository;
+
+    @Autowired
+    private PlantedPlantRepository plantedPlantRepository;
 
 
     @Override
@@ -39,9 +45,33 @@ public class GardenServiceImpl implements GardenService {
         throw new IllegalArgumentException("User not found");
     }
 
+//    @Override
+//    @Transactional
+//    public Garden createGarden(Long userId, GardenDto gardenDto) {
+//        Optional<User> userOptional = userRepository.findById(userId);
+//        if (userOptional.isPresent()) {
+//            User user = userOptional.get();
+//            Garden garden = new Garden();
+//            garden.setGardenName(gardenDto.getGardenName());
+//            garden.setUser(user);
+//
+//            // Save the garden to the database
+//            garden = gardenRepository.save(garden);
+//
+//            return garden;
+//        }
+//
+//        throw new IllegalArgumentException("User not found");
+//    }
+
     @Override
     @Transactional
     public Garden createGarden(Long userId, GardenDto gardenDto) {
+        if (userId == null) {
+            // Using a default id value in an attempt to circumvent CORS issue.
+            userId = 1L; // Replaces DEFAULT_USER_ID with the ID of default user
+        }
+
         Optional<User> userOptional = userRepository.findById(userId);
         if (userOptional.isPresent()) {
             User user = userOptional.get();
@@ -49,12 +79,33 @@ public class GardenServiceImpl implements GardenService {
             garden.setGardenName(gardenDto.getGardenName());
             garden.setUser(user);
 
-            return gardenRepository.save(garden);
+            // Save the garden to the database
+            garden = gardenRepository.save(garden);
 
+            return garden;
         }
 
         throw new IllegalArgumentException("User not found");
     }
+
+
+    @Override
+    @Transactional
+    public Garden findGardenOrThrow(Long gardenId) {
+        Optional<Garden> gardenOptional = gardenRepository.findById(gardenId);
+        if (gardenOptional.isPresent()) {
+            return gardenOptional.get();
+        }
+        throw new IllegalArgumentException("Garden not found");
+    }
+
+    private List<Plant> getPlantsFromDto(List<Long> plantIds) {
+        if (plantIds != null && !plantIds.isEmpty()) {
+            return plantRepository.findAllById(plantIds);
+        }
+        return new ArrayList<>();
+    }
+
 
     @Override
     @Transactional
@@ -71,63 +122,71 @@ public class GardenServiceImpl implements GardenService {
     @Override
     @Transactional
     public Garden updateGarden(Long gardenId, GardenDto updatedGardenDto) {
-        Optional<Garden> gardenOptional = gardenRepository.findById(gardenId);
-        if (gardenOptional.isPresent()) {
-            Garden garden = gardenOptional.get();
-            garden.setGardenName(updatedGardenDto.getGardenName());
-            return gardenRepository.save(garden);
-        }
+        Garden garden = findGardenOrThrow(gardenId);
 
-        throw new IllegalArgumentException("Garden not found");
+        // Updates garden properties
+        garden.setGardenName(updatedGardenDto.getGardenName());
+
+        return gardenRepository.save(garden);
     }
 
     @Override
     @Transactional
     public void addPlantToGarden(Long gardenId, Long plantId) {
-        Optional<Garden> gardenOptional = gardenRepository.findById(gardenId);
+        Garden garden = findGardenOrThrow(gardenId);
         Optional<Plant> plantOptional = plantRepository.findById(plantId);
 
-        if (gardenOptional.isPresent() && plantOptional.isPresent()) {
-            Garden garden = gardenOptional.get();
+        if (plantOptional.isPresent()) {
             Plant plant = plantOptional.get();
+            // Creates a new PlantedPlant entity and associate it with the garden and plant
+            PlantedPlant plantedPlant = new PlantedPlant();
+            plantedPlant.setGarden(garden);
+            plantedPlant.setPlant(plant);
 
-            // Check if the plant is not already in the garden to avoid duplicates
-            if (!garden.getAssociatedPlants().contains(plant)) {
-                garden.getAssociatedPlants().add(plant);
-                gardenRepository.save(garden);
-            }
+            // Saves the PlantedPlant entity
+            plantedPlantRepository.save(plantedPlant);
         } else {
-            throw new IllegalArgumentException("Garden or Plant not found");
+            throw new IllegalArgumentException("Plant not found");
         }
+    }
+
+    @Override
+    @Transactional
+    public void removePlantsFromGarden(Long gardenId, List<Long> plantIds) {
+        Garden garden = findGardenOrThrow(gardenId);
+
+        for (Long plantId : plantIds) {
+            Optional<PlantedPlant> plantedPlantOptional = plantedPlantRepository.findById(plantId);
+            if (plantedPlantOptional.isPresent()) {
+                PlantedPlant plantedPlant = plantedPlantOptional.get();
+                // Removes the PlantedPlant entity from the planted_plants table
+                plantedPlantRepository.delete(plantedPlant);
+            }
+        }
+
+        gardenRepository.save(garden);
     }
 
 
     @Override
     @Transactional
-    public void removePlantsFromGarden(Long gardenId, List<Long> plantIds) {
+    public List<Plant> getPlantsInGarden(Long gardenId) {
         Optional<Garden> gardenOptional = gardenRepository.findById(gardenId);
         if (gardenOptional.isPresent()) {
-            Garden garden = gardenOptional.get();
-
-            for (Long plantId : plantIds) {
-                Optional<Plant> plantOptional = plantRepository.findById(plantId);
-                if (plantOptional.isPresent()) {
-                    Plant plant = plantOptional.get();
-                    if (garden.getAssociatedPlants().contains(plant)) {
-                        garden.getAssociatedPlants().remove(plant);
-                        gardenRepository.save(garden);
-                    }
-                }
+            List<PlantedPlant> plantedPlants = plantedPlantRepository.findByGarden_GardenId(gardenId);
+            List<Plant> plantsInGarden = new ArrayList<>();
+            for (PlantedPlant plantedPlant : plantedPlants) {
+                plantsInGarden.add(plantedPlant.getPlant());
             }
-        } else {
-            throw new IllegalArgumentException("Garden not found");
+            return plantsInGarden;
         }
+        throw new IllegalArgumentException("Garden not found");
     }
 
-
     @Override
+    @Transactional
     public List<Garden> getAllGardens() {
-        return null;
+        return gardenRepository.findAll();
     }
 
 }

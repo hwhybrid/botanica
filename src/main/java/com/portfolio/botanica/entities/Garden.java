@@ -7,8 +7,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+
 
 @Entity
 @Table(name = "gardens")
@@ -16,6 +17,7 @@ import java.util.Set;
 public class Garden {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "garden_id")
     private Long gardenId;
 
     private String gardenName;
@@ -24,13 +26,8 @@ public class Garden {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(
-            name = "garden_plant_association",
-            joinColumns = @JoinColumn(name = "garden_id"),
-            inverseJoinColumns = @JoinColumn(name = "plant_id")
-    )
-    private Set<Plant> associatedPlants = new HashSet<>();
 
+    @OneToMany(mappedBy = "garden")
+    private List<PlantedPlant> plantedPlants = new ArrayList<>();
 
 }

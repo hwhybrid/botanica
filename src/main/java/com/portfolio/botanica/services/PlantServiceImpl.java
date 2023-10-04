@@ -59,4 +59,15 @@ public class PlantServiceImpl implements PlantService {
             e.printStackTrace();
         }
     }
+
+    @Override
+    public boolean isDatabaseSeeded() {
+        // Checks if there are any existing records in the plant table
+        return plantRepository.count() > 0;
+    }
+
+    @Override
+    public void deleteAllPlants() {
+        plantRepository.deleteAll();
+    }
 }

@@ -12,6 +12,7 @@ import lombok.Setter;
 public class Plant {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "plant_id")
     private Long plantId;
 
     @Column(nullable = false)
@@ -28,5 +29,6 @@ public class Plant {
 
     @Column(name = "image_url")
     private String imageUrl;
+
 
 }
