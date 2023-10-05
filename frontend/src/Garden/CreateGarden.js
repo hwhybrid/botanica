@@ -13,7 +13,7 @@ function CreateGarden() {
             const response = await axios.post(`${API_BASE_URL}/api/v1/gardens`, {
                 gardenName,
                 // Assign the garden to user1 (hardcoded username)
-                userId: 'user1',
+                userId: 1,
             });
             console.log(response.data);
             // Redirect to the GardenCreationPage after successful creation
@@ -22,6 +22,7 @@ function CreateGarden() {
             console.error('Error creating garden:', error);
         }
     };
+
 
     return (
         <div>

@@ -18,12 +18,12 @@ const Garden = () => {
 
     return (
         <div>
-            {/*<h1>Welcome to your Virtual Garden!</h1>*/}
-            {/*<ul>*/}
-            {/*    {plants.map((plant) => (*/}
-            {/*        <li key={plant.plantId}>{plant.plantName}</li>*/}
-            {/*    ))}*/}
-            {/*</ul>*/}
+            <h1>Welcome to your Virtual Garden!</h1>
+            <ul>
+                {plants.map((plant) => (
+                    <li key={plant.plantId}>{plant.plantName}</li>
+                ))}
+            </ul>
         </div>
     );
 };

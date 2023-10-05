@@ -9,9 +9,16 @@ const API_BASE_URL = 'http://localhost:8080'; // Define API base URL !!!
 function GardenList() {
     const [gardens, setGardens] = useState([]);
 
+
+
     useEffect(() => {
+
+        const headers = {
+            "Content-Type": "applications/json",
+            "Access-Control-Allow-Origin": "*"
+        }
         // Make a GET request to fetch the user's gardens
-        axios.get(`${API_BASE_URL}/api/v1/gardens`)
+        axios.get(`${API_BASE_URL}/gardens`, {headers})
             .then((response) => {
                 setGardens(response.data);
             })

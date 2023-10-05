@@ -20,10 +20,11 @@ import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "http://localhost:3000") // Allows requests from the frontend
+@CrossOrigin(origins = "*") // Allows requests from the frontend
 public class AuthController {
 
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
+
 
     @Autowired
     private AuthenticationManager authenticationManager;

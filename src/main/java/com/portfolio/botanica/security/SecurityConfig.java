@@ -42,8 +42,8 @@ public class SecurityConfig {
 
                     auth.anyRequest().authenticated();
                 })
-                .formLogin(withDefaults()) // Form-based login as the default. THE ORDER MATTERS!!!
-                .oauth2Login(withDefaults()); // OAuth2 login as an alternative or fallback
+                .formLogin(withDefaults()); // Form-based login as the default. THE ORDER MATTERS!!!
+//                .oauth2Login(withDefaults()); // OAuth2 login as an alternative or fallback
 
 
     return http.build();

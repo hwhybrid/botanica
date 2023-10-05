@@ -7,11 +7,11 @@ import About from "./About/About";
 import Contact from "./Contact/Contact";
 import Register from "./Auth/Register";
 import Login from "./Auth/Login";
-import GardenPage from "./Garden/GardenPage";
 import theme from './theme';
 import { ThemeProvider } from '@mui/material/styles';
 import PlantList from "./Plants/PlantList";
 import CreateGarden from "./Garden/CreateGarden";
+import GardenList from "./Garden/GardenList";
 
 function App() {
     return (
@@ -25,7 +25,7 @@ function App() {
                 <main>
                     <Routes>
                         <Route exact path="/" element={<Garden />} />
-                        <Route path="/gardens" element={<GardenPage />} />
+                        <Route path="/gardens" element={<GardenList />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/register" element={<Register />} />

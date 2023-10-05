@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // Allows requests from the frontend
 @RequestMapping("/api/v1/gardens")
+@CrossOrigin // Allows requests from the frontend
 public class GardenController {
 
     @Autowired
@@ -30,17 +30,17 @@ public class GardenController {
         return ResponseEntity.ok(gardens);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<List<Garden>> getUserGardens(@PathVariable Long userId) {
-        List<Garden> gardens = gardenService.getUserGardens(userId);
-        return ResponseEntity.ok(gardens);
-    }
-
-//    @PostMapping("/{userId}")
-//    public ResponseEntity<Garden> createGarden(@PathVariable Long userId, @RequestBody GardenDto gardenDto) {
-//        Garden garden = gardenService.createGarden(userId, gardenDto);
-//        return ResponseEntity.ok(garden);
+//    @GetMapping("/{userId}")
+//    public ResponseEntity<List<Garden>> getUserGardens(@PathVariable Long userId) {
+//        List<Garden> gardens = gardenService.getUserGardens(userId);
+//        return ResponseEntity.ok(gardens);
 //    }
+
+    @PostMapping("/{userId}")
+    public ResponseEntity<Garden> createGarden(@PathVariable Long userId, @RequestBody GardenDto gardenDto) {
+        Garden garden = gardenService.createGarden(userId, gardenDto);
+        return ResponseEntity.ok(garden);
+    }
 
     @PostMapping("")
     public ResponseEntity<Garden> createGarden(@RequestBody GardenDto gardenDto) {
@@ -51,8 +51,6 @@ public class GardenController {
         Garden garden = gardenService.createGarden(defaultUserId, gardenDto);
         return ResponseEntity.ok(garden);
     }
-
-
 
     @PutMapping("/{gardenId}")
     public ResponseEntity<Garden> updateGarden(@PathVariable Long gardenId, @RequestBody GardenDto updatedGardenDto) {

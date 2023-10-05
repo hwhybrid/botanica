@@ -24,14 +24,14 @@ public class BotanicaApplication {
 		SpringApplication.run(BotanicaApplication.class, args);
 	}
 
-	@Configuration
-	public class WebConfig implements WebMvcConfigurer {
-		@Override
-		public void addViewControllers(ViewControllerRegistry registry) {
-			registry.addViewController("/").setViewName("forward:/index.html");
-			registry.addViewController("/home").setViewName("forward:/home.html");
-
-		}
-	}
+//	@Configuration
+//	public class WebConfig implements WebMvcConfigurer {
+//		@Override
+//		public void addViewControllers(ViewControllerRegistry registry) {
+//			registry.addViewController("/").setViewName("forward:/index.html");
+////			registry.addViewController("/home").setViewName("forward:/home.html");
+//
+//		}
+//	}
 
 }

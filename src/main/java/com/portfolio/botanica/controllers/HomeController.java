@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000") // Allows requests from the frontend
+//@CrossOrigin(origins = "*") // Allows requests from the frontend
 public class HomeController {
 
     @GetMapping("/")
